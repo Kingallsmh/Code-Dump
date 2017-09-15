@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerManager : MonoBehaviour {
+
+    public static PlayerManager Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    // Use this for initialization
+    void Start () {
+		
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+    bool AllPlayersReady(){
+        //TODO run through playerList after a player finishes his turn 
+        // to see if everyone is done
+        return false;
+    }
+}
