@@ -1,0 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GameManagerScript : MonoBehaviour {
+
+    public static GameManagerScript Instance;
+    EntityManager entityManage;
+    PlayerManager playerManage;
+
+    Collider ourCollider;
+    BattlePhase currentPhase;
+
+    enum BattlePhase
+    {
+        PlanPhase, ActionPhase, EndPhase
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+	// Use this for initialization
+	void Start () {
+        entityManage = GetComponent<EntityManager>();
+        playerManage = GetComponent<PlayerManager>();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+    /// <summary>
+    /// Change the current phase to the next.
+    /// Phases will constanlty rotate between plan and action until the is victory condition met.
+    /// </summary>
+    void PhaseChange(){
+        if(currentPhase == BattlePhase.PlanPhase){
+            currentPhase = BattlePhase.ActionPhase;
+        }
+        else if(currentPhase == BattlePhase.ActionPhase){
+            currentPhase = BattlePhase.PlanPhase;
+        }
+
+        //TODO add a way to transition into endPhase
+    }
+}
