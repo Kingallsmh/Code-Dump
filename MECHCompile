@@ -1,0 +1,64 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+//Notes section: 
+// Use "= new Vector3()" or a already made vector3 when setting position.
+//Position.set() or LocalPosition.Set() does not work.
+
+public class MECHCompile : MonoBehaviour {
+
+    public GameObject Torso, Leg;
+    GameObject nuTorso, nuLeg;
+
+	// Use this for initialization
+	void Start () {
+        nuTorso = Instantiate(Torso);
+        nuTorso.transform.SetParent(this.transform);
+        nuTorso.transform.localPosition = new Vector3(0, 0, 0);
+        nuTorso.transform.rotation = nuTorso.transform.parent.rotation;
+        nuLeg = Instantiate(Leg);
+        nuLeg.transform.SetParent(this.transform);
+        nuLeg.transform.localPosition = new Vector3(0, 0, 0);
+        nuLeg.transform.rotation = nuLeg.transform.parent.rotation;
+        RearrangeParts();
+	}
+	
+    void RearrangeParts(){
+        ConfigureCamera(nuTorso);
+        Transform torsoAttachment = FindAttachPoint("LegAttach", nuTorso);
+        Transform legAttachment = FindAttachPoint("TorsoAttach", nuLeg);
+
+        nuTorso.transform.SetParent(legAttachment);
+        nuTorso.transform.localPosition = (-torsoAttachment.localPosition);
+        Debug.Log(torsoAttachment.localPosition.y);
+        Debug.Log(nuTorso.transform.localPosition);
+    }
+
+    Transform FindAttachPoint(string attachName, GameObject part){
+        for (int i = 0; i < part.transform.childCount; i++)
+        {
+            if (part.transform.GetChild(i).tag == "PartAttach" && part.transform.GetChild(i).name == attachName)
+            {
+                return part.transform.GetChild(i);
+            }
+        }
+        return null;
+    }
+
+    void ConfigureCamera(GameObject part){
+        //Find attach point which is child to Torso
+        Transform camAtch = null;
+        for (int i = 0; i < part.transform.childCount; i++){
+            if(part.transform.GetChild(i).tag == "CameraAttach"){
+                camAtch = part.transform.GetChild(i);
+                break;
+            }
+        }
+
+        //Set camera to attach point and reset cam position and rotation
+        Camera.main.transform.SetParent(camAtch.transform);
+        Camera.main.transform.localPosition = new Vector3(0, 0, 0);
+        Camera.main.transform.rotation = nuLeg.transform.parent.rotation;
+    }
+}
