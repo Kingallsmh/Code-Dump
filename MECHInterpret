@@ -1,0 +1,96 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MECHInterpret : MonoBehaviour {
+
+    PlayerInput control;
+    Rigidbody rBody;
+    MECHCompile assembly;
+
+    float maxSpeed = 4.0f;
+    public bool grounded;
+    public float gravityChange = 1f, tempGravity = 0f;
+    public float maxVelocityChange = 1.0f;
+    public bool canJump = true;
+    public float jump = 50.0f;
+
+	// Use this for initialization
+	void Start () {
+        assembly = GetComponent<MECHCompile>();
+        control = GetComponent<PlayerInput>();
+        rBody = GetComponent<Rigidbody>();
+        rBody.freezeRotation = true;
+
+        rBody.useGravity = false;
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
+
+    private void FixedUpdate()
+    {
+        SetOnFloor();
+        MovePlayer();
+        TurnBody();
+    }
+
+    public void TurnBody(){
+        Vector3 rotation = control.GetInput(2);
+        Transform trans = assembly.GetPart(0).transform;
+        trans.rotation = Quaternion.Euler(trans.rotation.eulerAngles.x, trans.rotation.eulerAngles.y, 0);
+        trans.rotation *= Quaternion.Euler(rotation.y, rotation.x, 0);
+    }
+
+    public void MovePlayer()
+    {
+        Vector3 targetVelocity = control.GetInput(1) * maxSpeed;
+        targetVelocity.x = 0;
+        if (grounded)
+        {
+            tempGravity = 0f;
+            targetVelocity.y = 0f;
+            // Jump
+            if (canJump && control.GetBtnPush(2))
+            {
+                targetVelocity.y += jump;
+            }
+        }
+        else
+        {
+            Gravity();
+        }
+
+        targetVelocity = transform.TransformDirection(targetVelocity);
+        if (!grounded)
+        {
+            targetVelocity.y -= tempGravity;
+        }
+        //speeds = transform.TransformDirection(speeds);
+        rBody.velocity = targetVelocity;
+        grounded = false;
+    }
+
+    public void SetOnFloor()
+    {
+        Ray ray = new Ray(transform.position, -transform.up);
+        RaycastHit hit;
+        Physics.Raycast(ray, out hit, 5f);
+        if (hit.normal != Vector3.zero)
+        {
+            transform.rotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+        }
+    }
+
+    public void Gravity()
+    {
+        tempGravity += gravityChange;
+    }
+
+    void OnCollisionStay()
+    {
+        grounded = true;
+    }
+}
