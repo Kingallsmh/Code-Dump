@@ -61,4 +61,15 @@ public class MECHCompile : MonoBehaviour {
         Camera.main.transform.localPosition = new Vector3(0, 0, 0);
         Camera.main.transform.rotation = nuLeg.transform.parent.rotation;
     }
+
+    //TODO change this another system for parameter use
+    public GameObject GetPart(int num){
+        if(num == 0){
+            return nuTorso;
+        }
+        else if(num == 1){
+            return nuLeg;
+        }
+        return null;
+    }
 }
