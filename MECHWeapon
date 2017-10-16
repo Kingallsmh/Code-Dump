@@ -10,4 +10,12 @@ public class MECHWeapon : MonoBehaviour {
 	void Start () {
 		
 	}
+
+    public void UseWeapon(){
+        
+    }
+
+    public void ReloadWeapon(){
+        
+    }
 }
