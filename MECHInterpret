@@ -2,57 +2,70 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MECHInterpret : MonoBehaviour {
+public class MECHInterpret : MonoBehaviour
+{
 
     PlayerInput control;
     Rigidbody rBody;
     MECHCompile assembly;
 
-    float maxSpeed = 4.0f;
+    float maxSpeed = 2.0f;
     public bool grounded;
     public float gravityChange = 1f, tempGravity = 0f;
     public float maxVelocityChange = 1.0f;
     public bool canJump = true;
-    public float jump = 50.0f;
+    public float jump = 40.0f;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         assembly = GetComponent<MECHCompile>();
         control = GetComponent<PlayerInput>();
         rBody = GetComponent<Rigidbody>();
         rBody.freezeRotation = true;
 
         rBody.useGravity = false;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     private void FixedUpdate()
     {
-        SetOnFloor();
+        //SetOnFloor();
         MovePlayer();
+        TurnMech();
         TurnBody();
     }
 
-    public void TurnBody(){
+    public void TurnBody()
+    {
         Vector3 rotation = control.GetInput(2);
-        Transform trans = assembly.GetPart(0).transform;
+        Transform trans = assembly.FindAttachPoint("TorsoAttach", assembly.GetPart(1));
         trans.rotation = Quaternion.Euler(trans.rotation.eulerAngles.x, trans.rotation.eulerAngles.y, 0);
-        trans.rotation *= Quaternion.Euler(rotation.y, rotation.x, 0);
+        trans.rotation *= Quaternion.Euler(-rotation.y, rotation.x, 0);
+    }
+
+    public void TurnMech()
+    {
+        Vector3 rotation = control.GetInput(1);
+        rBody.rotation = Quaternion.Euler(0, rBody.rotation.eulerAngles.y, 0);
+        rBody.rotation *= Quaternion.Euler(0, rotation.x, 0);        
     }
 
     public void MovePlayer()
     {
         Vector3 targetVelocity = control.GetInput(1) * maxSpeed;
         targetVelocity.x = 0;
+        targetVelocity.y = rBody.velocity.y;
         if (grounded)
         {
             tempGravity = 0f;
-            targetVelocity.y = 0f;
             // Jump
+            //TODO prevent wall scaling when jumping
             if (canJump && control.GetBtnPush(2))
             {
                 targetVelocity.y += jump;
@@ -68,8 +81,10 @@ public class MECHInterpret : MonoBehaviour {
         {
             targetVelocity.y -= tempGravity;
         }
-        //speeds = transform.TransformDirection(speeds);
         rBody.velocity = targetVelocity;
+        //Animation for movement
+        assembly.GetPartAnimation(assembly.GetPart(1)).SetFloat("Movement", transform.InverseTransformDirection(rBody.velocity).z);
+        //Reset grounded
         grounded = false;
     }
 
@@ -86,11 +101,29 @@ public class MECHInterpret : MonoBehaviour {
 
     public void Gravity()
     {
+        if(tempGravity < maxVelocityChange)
         tempGravity += gravityChange;
     }
 
     void OnCollisionStay()
     {
         grounded = true;
+    }
+
+    public bool WithinBounds(float degreesDif, float a, float b)
+    {
+        Debug.Log(a - b);
+        if (a - b < degreesDif && a - b > -degreesDif)
+        {
+            return true;
+        }
+        else if (b - a < degreesDif && b - a > -degreesDif)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }
