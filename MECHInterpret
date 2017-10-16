@@ -15,6 +15,12 @@ public class MECHInterpret : MonoBehaviour
     public float maxVelocityChange = 1.0f;
     public bool canJump = true;
     public float jump = 40.0f;
+    
+    //TODO add an aim button that changes from standard controls 
+    //(left stick U/D move, L/R Strafe; right stick turn"Entire Mech" and look up and down)
+    //to what is currently in play
+    //(left stick U/D move, L/R turn legs; right stick look"Turn top part" which stays where it's looking so independent of legs)
+    //When aim mode is disabled, turn top part to face where legs are facing
 
     // Use this for initialization
     void Start()
@@ -53,7 +59,8 @@ public class MECHInterpret : MonoBehaviour
     {
         Vector3 rotation = control.GetInput(1);
         rBody.rotation = Quaternion.Euler(0, rBody.rotation.eulerAngles.y, 0);
-        rBody.rotation *= Quaternion.Euler(0, rotation.x, 0);        
+        rBody.rotation *= Quaternion.Euler(0, rotation.x, 0);
+        //Add subtracting of rotation on body when aiming to keep static view
     }
 
     public void MovePlayer()
