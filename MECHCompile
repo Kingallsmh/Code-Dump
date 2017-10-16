@@ -6,11 +6,16 @@ using UnityEngine;
 // Use "= new Vector3()" or a already made vector3 when setting position.
 //Position.set() or LocalPosition.Set() does not work.
 
+//Make sure to set each attachmentObject to the attach tag
+
 public class MECHCompile : MonoBehaviour
 {
 
     public GameObject Torso, Leg, Head;
     GameObject nuTorso, nuLeg, nuHead;
+
+    //TEMP
+    public GameObject weaponL, weaponR;
 
     // Use this for initialization
     void Start()
@@ -31,6 +36,7 @@ public class MECHCompile : MonoBehaviour
         nuLeg.transform.localPosition = new Vector3(0, 0, 0);
         nuLeg.transform.rotation = nuLeg.transform.parent.rotation;
         RearrangeParts();
+        AttachWeapons();
     }
 
     void RearrangeParts()
@@ -79,6 +85,26 @@ public class MECHCompile : MonoBehaviour
         Camera.main.transform.rotation = Camera.main.transform.parent.rotation;
     }
 
+    void AttachWeapons(){
+        if(nuTorso.GetComponent<MECHPart>().weaponPoints.Count > 0){
+            GameObject weapon = Instantiate(weaponL);
+            weapon.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[0]);
+            weapon.transform.localPosition = GetAdjustmentPosition(weapon.transform, weapon.GetComponent<MECHWeapon>().attachPoint.transform);
+            weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+            GameObject weapon2 = Instantiate(weaponR);
+            weapon2.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[1]);
+            weapon2.transform.localScale = new Vector3(-1, 1, 1);
+            weapon2.transform.localPosition = GetAdjustmentPosition(weapon2.transform, weapon2.GetComponent<MECHWeapon>().attachPoint.transform);
+            weapon2.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+        }
+    }
+
+    Vector3 GetAdjustmentPosition(Transform a, Transform b){
+        return a.position - b.position;
+    }
+
     //TODO change this another system for parameter use
     public GameObject GetPart(int num)
     {
@@ -90,7 +116,7 @@ public class MECHCompile : MonoBehaviour
         {
             return nuLeg;
         }
-        else if(num == 2)
+        else if (num == 2)
         {
             return nuHead;
         }
