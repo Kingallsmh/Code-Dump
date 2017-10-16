@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MECHPart : MonoBehaviour {
-
+public class MECHPart : MonoBehaviour
+{
+    //Public list to drop attach points for parts for ease of access
     public List<Transform> attachPoints;
+    public List<Transform> weaponPoints;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
+    // Use this for initialization
+    void Start()
+    {
+
+    }
 }
