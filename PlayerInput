@@ -2,43 +2,101 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerInput : MonoBehaviour {
+public class PlayerInput : MonoBehaviour
+{
 
     Vector3 Input1, Input2;
     bool btn1, btn2;
 
+    //For extra controls
+    bool doubleLeft, doubleRight;
+    float singleTap;
+    float btnTimer, timeAllowed = 1;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         StartCoroutine(GatherInput());
-	}
+    }
 
-    IEnumerator GatherInput(){
-        while(this){
+    IEnumerator GatherInput()
+    {
+        while (this)
+        {
             Input2 = new Vector3(Input.GetAxis("Secondary Horizontal"), Input.GetAxis("Secondary Vertical"), 0);
             Input1 = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             btn1 = Input.GetAxis("Fire1") > 0;
             btn2 = Input.GetAxis("Fire2") > 0;
+            CheckForDoubleTap(Input2.x);
             yield return new WaitForEndOfFrame();
         }
         yield return null;
     }
 
-    public Vector3 GetInput(int inputNum){
-        if (inputNum == 1){
+    //TODO fix double tap for bring body to 0 y rotation
+    void CheckForDoubleTap(float input)
+    {
+        if(singleTap != 0)
+        {
+            if(btnTimer < timeAllowed)
+            {
+                btnTimer += Time.deltaTime;
+                if(singleTap > 0 && input > 0)
+                {
+                    doubleRight = true;
+                }
+                else if(singleTap < 0 && input < 0)
+                {
+                    doubleLeft = true;
+                }
+            }
+            else
+            {
+                singleTap = 0;
+                btnTimer = 0;
+            }
+        }
+        if (input > 0 || input < 0)
+        {
+            singleTap = input;
+        }
+    }
+
+    public bool isDoubleTapped()
+    {
+        if(doubleLeft || doubleRight)
+        {
+            doubleLeft = false;
+            doubleRight = false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public Vector3 GetInput(int inputNum)
+    {
+        if (inputNum == 1)
+        {
             return Input1;
         }
-        else if(inputNum == 2){
+        else if (inputNum == 2)
+        {
             return Input2;
         }
         return Vector3.zero;
     }
 
-    public bool GetBtnPush(int btnNum){
-        if(btnNum == 1){
+    public bool GetBtnPush(int btnNum)
+    {
+        if (btnNum == 1)
+        {
             return btn1;
         }
-        else if(btnNum == 2){
+        else if (btnNum == 2)
+        {
             return btn2;
         }
         return false;
