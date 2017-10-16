@@ -6,51 +6,68 @@ using UnityEngine;
 // Use "= new Vector3()" or a already made vector3 when setting position.
 //Position.set() or LocalPosition.Set() does not work.
 
-public class MECHCompile : MonoBehaviour {
+public class MECHCompile : MonoBehaviour
+{
 
-    public GameObject Torso, Leg;
-    GameObject nuTorso, nuLeg;
+    public GameObject Torso, Leg, Head;
+    GameObject nuTorso, nuLeg, nuHead;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
+        //Torso
         nuTorso = Instantiate(Torso);
         nuTorso.transform.SetParent(this.transform);
         nuTorso.transform.localPosition = new Vector3(0, 0, 0);
         nuTorso.transform.rotation = nuTorso.transform.parent.rotation;
+        //Head
+        nuHead = Instantiate(Head);
+        nuHead.transform.SetParent(this.transform);
+        nuHead.transform.localPosition = new Vector3(0, 0, 0);
+        nuHead.transform.rotation = nuHead.transform.parent.rotation;
+        //Leg
         nuLeg = Instantiate(Leg);
         nuLeg.transform.SetParent(this.transform);
         nuLeg.transform.localPosition = new Vector3(0, 0, 0);
         nuLeg.transform.rotation = nuLeg.transform.parent.rotation;
         RearrangeParts();
-	}
-	
-    void RearrangeParts(){
-        ConfigureCamera(nuTorso);
-        Transform torsoAttachment = FindAttachPoint("LegAttach", nuTorso);
-        Transform legAttachment = FindAttachPoint("TorsoAttach", nuLeg);
-
-        nuTorso.transform.SetParent(legAttachment);
-        nuTorso.transform.localPosition = (-torsoAttachment.localPosition);
-        Debug.Log(torsoAttachment.localPosition.y);
-        Debug.Log(nuTorso.transform.localPosition);
     }
 
-    Transform FindAttachPoint(string attachName, GameObject part){
-        for (int i = 0; i < part.transform.childCount; i++)
+    void RearrangeParts()
+    {
+        ConfigureCamera(nuHead);
+        Transform headTorsoAttachment = FindAttachPoint("TorsoAttach", nuHead);
+        Transform torsoHeadAttachment = FindAttachPoint("HeadAttach", nuTorso);
+        Transform torsoLegAttachment = FindAttachPoint("LegAttach", nuTorso);
+        Transform legTorsoAttachment = FindAttachPoint("TorsoAttach", nuLeg);
+
+        nuHead.transform.SetParent(torsoHeadAttachment);
+        nuHead.transform.localPosition = (-headTorsoAttachment.localPosition);
+        nuTorso.transform.SetParent(legTorsoAttachment);
+        nuTorso.transform.localPosition = (-torsoLegAttachment.localPosition);
+    }
+
+    public Transform FindAttachPoint(string attachName, GameObject part)
+    {
+        List<Transform> tempList = part.GetComponent<MECHPart>().attachPoints;
+        for (int i = 0; i < tempList.Count; i++)
         {
-            if (part.transform.GetChild(i).tag == "PartAttach" && part.transform.GetChild(i).name == attachName)
+            if (tempList[i].tag == "PartAttach" && tempList[i].name == attachName)
             {
-                return part.transform.GetChild(i);
+                return tempList[i];
             }
         }
         return null;
     }
 
-    void ConfigureCamera(GameObject part){
+    void ConfigureCamera(GameObject part)
+    {
         //Find attach point which is child to Torso
         Transform camAtch = null;
-        for (int i = 0; i < part.transform.childCount; i++){
-            if(part.transform.GetChild(i).tag == "CameraAttach"){
+        for (int i = 0; i < part.transform.childCount; i++)
+        {
+            if (part.transform.GetChild(i).tag == "CameraAttach")
+            {
                 camAtch = part.transform.GetChild(i);
                 break;
             }
@@ -59,17 +76,29 @@ public class MECHCompile : MonoBehaviour {
         //Set camera to attach point and reset cam position and rotation
         Camera.main.transform.SetParent(camAtch.transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, 0);
-        Camera.main.transform.rotation = nuLeg.transform.parent.rotation;
+        Camera.main.transform.rotation = Camera.main.transform.parent.rotation;
     }
 
     //TODO change this another system for parameter use
-    public GameObject GetPart(int num){
-        if(num == 0){
+    public GameObject GetPart(int num)
+    {
+        if (num == 0)
+        {
             return nuTorso;
         }
-        else if(num == 1){
+        else if (num == 1)
+        {
             return nuLeg;
         }
+        else if(num == 2)
+        {
+            return nuHead;
+        }
         return null;
+    }
+
+    public Animator GetPartAnimation(GameObject part)
+    {
+        return part.GetComponent<Animator>();
     }
 }
