@@ -1,0 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MECHWeapon : MonoBehaviour {
+
+    public GameObject attachPoint;
+
+	// Use this for initialization
+	void Start () {
+		
+	}
+}
