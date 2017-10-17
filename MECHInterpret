@@ -9,18 +9,12 @@ public class MECHInterpret : MonoBehaviour
     Rigidbody rBody;
     MECHCompile assembly;
 
-    float maxSpeed = 2.0f;
+    float maxSpeed = 3.0f;
     public bool grounded;
     public float gravityChange = 1f, tempGravity = 0f;
     public float maxVelocityChange = 1.0f;
     public bool canJump = true;
     public float jump = 40.0f;
-    
-    //TODO add an aim button that changes from standard controls 
-    //(left stick U/D move, L/R Strafe; right stick turn"Entire Mech" and look up and down)
-    //to what is currently in play
-    //(left stick U/D move, L/R turn legs; right stick look"Turn top part" which stays where it's looking so independent of legs)
-    //When aim mode is disabled, turn top part to face where legs are facing
 
     // Use this for initialization
     void Start()
@@ -33,18 +27,13 @@ public class MECHInterpret : MonoBehaviour
         rBody.useGravity = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void FixedUpdate()
     {
         //SetOnFloor();
         MovePlayer();
         TurnMech();
         TurnBody();
+        FireWeapons();
     }
 
     public void TurnBody()
@@ -60,7 +49,6 @@ public class MECHInterpret : MonoBehaviour
         Vector3 rotation = control.GetInput(1);
         rBody.rotation = Quaternion.Euler(0, rBody.rotation.eulerAngles.y, 0);
         rBody.rotation *= Quaternion.Euler(0, rotation.x, 0);
-        //Add subtracting of rotation on body when aiming to keep static view
     }
 
     public void MovePlayer()
@@ -73,7 +61,7 @@ public class MECHInterpret : MonoBehaviour
             tempGravity = 0f;
             // Jump
             //TODO prevent wall scaling when jumping
-            if (canJump && control.GetBtnPush(2))
+            if (canJump && control.GetBtnPush(1))
             {
                 targetVelocity.y += jump;
             }
@@ -95,6 +83,16 @@ public class MECHInterpret : MonoBehaviour
         grounded = false;
     }
 
+    public void FireWeapons(){
+        if(control.GetBtnPush(2)){
+            assembly.GetWeapon(1).GetComponent<MECHWeapon>().UseWeapon();
+        }
+        if (control.GetBtnPush(3))
+        {
+            assembly.GetWeapon(2).GetComponent<MECHWeapon>().UseWeapon();
+        }
+    }
+
     public void SetOnFloor()
     {
         Ray ray = new Ray(transform.position, -transform.up);
@@ -108,8 +106,8 @@ public class MECHInterpret : MonoBehaviour
 
     public void Gravity()
     {
-        if(tempGravity < maxVelocityChange)
-        tempGravity += gravityChange;
+        if (tempGravity < maxVelocityChange)
+            tempGravity += gravityChange;
     }
 
     void OnCollisionStay()
