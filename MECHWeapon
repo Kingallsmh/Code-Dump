@@ -2,20 +2,63 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MECHWeapon : MonoBehaviour {
+public abstract class MECHWeapon : MonoBehaviour {
 
     public GameObject attachPoint;
+    public List<Transform> launchPoints;
+    private bool ready = false;
+    float coolTimer, cooldownTime = 1;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		
 	}
 
-    public void UseWeapon(){
-        
+    private void Update()
+    {
+        Cooldown();
     }
 
-    public void ReloadWeapon(){
-        
+    void Cooldown(){
+        if(!ready){
+            if(coolTimer < cooldownTime){
+                coolTimer += Time.deltaTime;
+            }
+            else
+            {
+                coolTimer = 0;
+                ready = true;
+            }
+        }
+    }
+
+    public abstract void UseWeapon();
+
+    public abstract void ReloadWeapon();
+
+    public bool Ready
+    {
+        get
+        {
+            return ready;
+        }
+
+        set
+        {
+            ready = value;
+        }
+    }
+
+    public float CooldownTime
+    {
+        get
+        {
+            return cooldownTime;
+        }
+
+        set
+        {
+            cooldownTime = value;
+        }
     }
 }
