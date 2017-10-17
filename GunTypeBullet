@@ -1,0 +1,50 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GunTypeBullet : MonoBehaviour {
+
+    GunTypeWeapon weapon;
+    float speed = 30;
+    Rigidbody rBody;
+
+    float timer, bulletLife = 3;
+
+    private void Update()
+    {
+        if(timer < bulletLife){
+            timer += Time.deltaTime;
+        }
+        else{
+            EndBullet();
+        }
+    }
+
+    public void Launch(GunTypeWeapon w){
+        Weapon = w;
+        rBody = GetComponent<Rigidbody>();
+        rBody.velocity = transform.TransformDirection(0, 0, speed);
+    }
+
+    public void EndBullet(){
+        rBody.velocity = Vector3.zero;
+        gameObject.SetActive(false);
+        timer = 0;
+        Weapon.BulletBag.Add(gameObject);
+        transform.SetParent(Weapon.transform);
+        transform.localPosition = Vector3.zero;
+    }
+
+    public GunTypeWeapon Weapon
+    {
+        get
+        {
+            return weapon;
+        }
+
+        set
+        {
+            weapon = value;
+        }
+    }
+}
