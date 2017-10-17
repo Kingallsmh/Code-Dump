@@ -6,7 +6,7 @@ public class PlayerInput : MonoBehaviour
 {
 
     Vector3 Input1, Input2;
-    bool btn1, btn2;
+    bool btn1, btn2, btn3;
 
     //For extra controls
     bool doubleLeft, doubleRight;
@@ -27,6 +27,7 @@ public class PlayerInput : MonoBehaviour
             Input1 = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             btn1 = Input.GetAxis("Fire1") > 0;
             btn2 = Input.GetAxis("Fire2") > 0;
+            btn3 = Input.GetAxis("Fire3") > 0;
             CheckForDoubleTap(Input2.x);
             yield return new WaitForEndOfFrame();
         }
@@ -36,16 +37,16 @@ public class PlayerInput : MonoBehaviour
     //TODO fix double tap for bring body to 0 y rotation
     void CheckForDoubleTap(float input)
     {
-        if(singleTap != 0)
+        if (singleTap != 0)
         {
-            if(btnTimer < timeAllowed)
+            if (btnTimer < timeAllowed)
             {
                 btnTimer += Time.deltaTime;
-                if(singleTap > 0 && input > 0)
+                if (singleTap > 0 && input > 0)
                 {
                     doubleRight = true;
                 }
-                else if(singleTap < 0 && input < 0)
+                else if (singleTap < 0 && input < 0)
                 {
                     doubleLeft = true;
                 }
@@ -64,7 +65,7 @@ public class PlayerInput : MonoBehaviour
 
     public bool isDoubleTapped()
     {
-        if(doubleLeft || doubleRight)
+        if (doubleLeft || doubleRight)
         {
             doubleLeft = false;
             doubleRight = false;
@@ -98,6 +99,9 @@ public class PlayerInput : MonoBehaviour
         else if (btnNum == 2)
         {
             return btn2;
+        }
+        else if(btnNum == 3){
+            return btn3;
         }
         return false;
     }
