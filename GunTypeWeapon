@@ -1,0 +1,72 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GunTypeWeapon : MECHWeapon
+{
+    public GameObject bulletType;
+    List<GameObject> bulletBag;
+    int bagSize = 20;
+
+    private void Start()
+    {
+        CooldownTime = 0.5f;
+        bulletBag = new List<GameObject>();
+        for (int i = 0; i < bagSize; i++){
+            GameObject b = Instantiate(bulletType);
+            b.transform.SetParent(transform);
+            b.SetActive(false);
+            bulletBag.Add(b);
+        }
+    }
+
+    public override void ReloadWeapon()
+    {
+        
+    }
+
+    public override void UseWeapon()
+    {
+        Debug.Log("Here");
+        if(this.Ready){
+            Transform point = GetLaunchPoint();
+            bulletBag[0].transform.position = point.position;
+            bulletBag[0].transform.rotation = point.rotation;
+            bulletBag[0].transform.SetParent(null);
+            bulletBag[0].SetActive(true);
+            bulletBag[0].GetComponent<GunTypeBullet>().Launch(this);
+            bulletBag.Remove(bulletBag[0]);
+            this.Ready = false;
+        }
+    }
+
+    int currentPoint = 0;
+    Transform GetLaunchPoint(){
+        if(this.launchPoints.Count > 1){
+            if(currentPoint < launchPoints.Count){
+                currentPoint++;
+                return launchPoints[currentPoint - 1];
+            }
+            else{
+                currentPoint = 0;
+                return launchPoints[currentPoint];
+            }
+        }
+        else{
+            return this.launchPoints[0];
+        }
+    }
+
+    public List<GameObject> BulletBag
+    {
+        get
+        {
+            return bulletBag;
+        }
+
+        set
+        {
+            bulletBag = value;
+        }
+    }
+}
