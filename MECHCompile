@@ -16,6 +16,7 @@ public class MECHCompile : MonoBehaviour
 
     //TEMP
     public GameObject weaponL, weaponR;
+    GameObject w1, w2;
 
     // Use this for initialization
     void Start()
@@ -87,18 +88,28 @@ public class MECHCompile : MonoBehaviour
 
     void AttachWeapons(){
         if(nuTorso.GetComponent<MECHPart>().weaponPoints.Count > 0){
-            GameObject weapon = Instantiate(weaponL);
-            weapon.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[0]);
-            weapon.transform.localPosition = GetAdjustmentPosition(weapon.transform, weapon.GetComponent<MECHWeapon>().attachPoint.transform);
-            weapon.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            w1 = Instantiate(weaponL);
+            w1.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[0]);
+            w1.transform.localPosition = GetAdjustmentPosition(w1.transform, w1.GetComponent<MECHWeapon>().attachPoint.transform);
+            w1.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
-            GameObject weapon2 = Instantiate(weaponR);
-            weapon2.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[1]);
-            weapon2.transform.localScale = new Vector3(-1, 1, 1);
-            weapon2.transform.localPosition = GetAdjustmentPosition(weapon2.transform, weapon2.GetComponent<MECHWeapon>().attachPoint.transform);
-            weapon2.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            w2 = Instantiate(weaponR);
+            w2.transform.SetParent(nuTorso.GetComponent<MECHPart>().weaponPoints[1]);
+            w2.transform.localScale = new Vector3(-1, 1, 1);
+            w2.transform.localPosition = GetAdjustmentPosition(w2.transform, w2.GetComponent<MECHWeapon>().attachPoint.transform);
+            w2.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         }
+    }
+
+    public GameObject GetWeapon(int num){
+        if(num == 1){
+            return w1;
+        }
+        else if(num == 2){
+            return w2;
+        }
+        return null;
     }
 
     Vector3 GetAdjustmentPosition(Transform a, Transform b){
