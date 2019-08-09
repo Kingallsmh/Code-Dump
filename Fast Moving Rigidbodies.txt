@@ -1,0 +1,1 @@
+If a Rigidbody is moving too fast for a collision to be detected (IE Fast moving small object and thin wall -> object will "pass through"/ No collision), set the moving Rigidbody to "Continuous Dynamic" and the target to "Continuous" for Collision Detection.

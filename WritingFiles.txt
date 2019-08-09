@@ -1,0 +1,7 @@
+-Used for writing serializable objects to a file
+	BinaryFormatter bf = new BinaryFormatter();
+        using(var ms = new MemoryStream())
+        {
+            bf.Serialize(ms, clip);
+            File.WriteAllBytes(Application.dataPath + "/AnimationFolder" + filename + ".anim", ms.ToArray());
+        }

@@ -1,0 +1,8 @@
+-Grab all existing components in scene
+Object.FindObjectsOfType<>()
+
+-Add function in context menu (gear icon on script)
+[ContextMenu("Do Thing")]
+
+-Debug.Break() to pause your game!
+Note : If things don't seem to be where you think they should be after using this, remember that Debug.Break() does not pause directly after the line you wrote it on, but at the end of the frame.
